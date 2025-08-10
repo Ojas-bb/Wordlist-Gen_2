@@ -11,11 +11,44 @@ A versatile command-line tool to generate, scrape, and combine wordlists for var
 
 ## Installation
 
-1.  Clone the repository or download the `wordlist_generator.py` script.
-2.  Install the required Python packages for the web scraping feature:
-    ```bash
-    pip install -r requirements.txt
-    ```
+To get started, you need to have Python 3 and `git` installed on your system.
+
+**1. Clone the Repository**
+
+Open your terminal and run the following command to clone the repository to your local machine. You will need to replace `[repository-url]` with the actual URL of the GitHub repository.
+
+```bash
+git clone [repository-url]
+```
+
+After the command finishes, a new directory will be created. Navigate into it:
+
+```bash
+cd [repository-directory-name]
+```
+
+**2. Install Dependencies**
+
+This tool uses a few external Python libraries for web scraping. Install them using `pip` and the provided `requirements.txt` file. It's recommended to do this within a Python virtual environment.
+
+```bash
+# (Optional, but recommended) Create and activate a virtual environment
+python3 -m venv venv
+source venv/bin/activate
+
+# Install the required packages
+pip install -r requirements.txt
+```
+
+**3. Make the Script Executable**
+
+Ensure the main script is executable by running:
+
+```bash
+chmod +x wordlist_generator.py
+```
+
+Now you are ready to use the tool!
 
 ## Usage
 
