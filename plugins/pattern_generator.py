@@ -1,6 +1,6 @@
 import string
 import itertools
-from gen2_plugins.base import BasePlugin
+from plugins.base import BasePlugin
 
 class PatternGeneratorPlugin(BasePlugin):
     name = "pattern_generator"

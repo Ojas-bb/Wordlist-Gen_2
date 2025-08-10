@@ -1,4 +1,4 @@
-from gen2_plugins.base import BasePlugin
+from plugins.base import BasePlugin
 
 class FileSourcePlugin(BasePlugin):
     name = "file_source"

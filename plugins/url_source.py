@@ -1,7 +1,7 @@
 import sys
 import re
 from urllib.parse import urljoin, urlparse
-from gen2_plugins.base import BasePlugin
+from plugins.base import BasePlugin
 
 class UrlSourcePlugin(BasePlugin):
     name = "url_source"

@@ -1,6 +1,6 @@
 import string
 import itertools
-from gen2_plugins.base import BasePlugin
+from plugins.base import BasePlugin
 
 class CharsetGeneratorPlugin(BasePlugin):
     name = "charset_generator"

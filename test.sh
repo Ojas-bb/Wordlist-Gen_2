@@ -60,6 +60,9 @@ EOL
 
 echo -e "\n--- Running Test Cases ---"
 
+# Make the script executable first
+chmod +x wordlist_generator.py
+
 # 1. Basic generation
 output=$(./wordlist_generator.py --min-length=2 --max-length=2 --charset="12")
 expected_output=$'11\n12\n21\n22'
