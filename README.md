@@ -15,16 +15,16 @@ To get started, you need to have Python 3 and `git` installed on your system.
 
 **1. Clone the Repository**
 
-Open your terminal and run the following command to clone the repository to your local machine. You will need to replace `[repository-url]` with the actual URL of the GitHub repository.
+Open your terminal and run the following command to clone the repository into a directory named `wordlist-gen1`.
 
 ```bash
-git clone [repository-url]
+git clone https://github.com/Ojas-bb/wordlist---gen1.git wordlist-gen1
 ```
 
-After the command finishes, a new directory will be created. Navigate into it:
+After the command finishes, navigate into the new directory:
 
 ```bash
-cd [repository-directory-name]
+cd wordlist-gen1
 ```
 
 **2. Install Dependencies**
