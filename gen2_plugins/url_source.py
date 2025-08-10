@@ -1,7 +1,7 @@
 import sys
 import re
 from urllib.parse import urljoin, urlparse
-from plugins.base import BasePlugin
+from gen2_plugins.base import BasePlugin
 
 class UrlSourcePlugin(BasePlugin):
     name = "url_source"
@@ -30,6 +30,7 @@ class UrlSourcePlugin(BasePlugin):
         words_to_yield = set()
         visited_urls = set()
 
+        # This needs to handle the case where self.args.url is None, though should_run prevents it.
         if self.args.url.startswith('file://'):
             initial_domain = 'local_file'
         else:
@@ -52,7 +53,6 @@ class UrlSourcePlugin(BasePlugin):
                 for script in soup(["script", "style"]):
                     script.extract()
 
-                # Corrected line with separator
                 text = soup.get_text(separator=' ')
 
                 words_on_page = re.findall(r'\b[a-zA-Z0-9]+\b', text.lower())

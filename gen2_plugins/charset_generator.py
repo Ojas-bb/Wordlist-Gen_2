@@ -1,5 +1,6 @@
 import string
-from plugins.base import BasePlugin
+import itertools
+from gen2_plugins.base import BasePlugin
 
 class CharsetGeneratorPlugin(BasePlugin):
     name = "charset_generator"
@@ -30,6 +31,7 @@ class CharsetGeneratorPlugin(BasePlugin):
     def run(self):
         """Generates words based on a character set and yields them."""
         import itertools
+        import sys
 
         if self.args.min_length is None or self.args.max_length is None:
             raise ValueError("--min-length and --max-length are required for charset generation.")
@@ -51,7 +53,22 @@ class CharsetGeneratorPlugin(BasePlugin):
         if not final_charset:
             raise ValueError("No character set specified for generation.")
 
+        pbar = None
+        if self.args.progress:
+            try:
+                from tqdm import tqdm
+            except ImportError:
+                raise ImportError("Progress bar requires 'tqdm'. Please run: pip install tqdm")
+
+            total_words = sum(len(final_charset) ** l for l in range(self.args.min_length, self.args.max_length + 1))
+            pbar = tqdm(total=total_words, desc="Generating from Charset", unit="word", file=sys.stderr)
+
         for length in range(self.args.min_length, self.args.max_length + 1):
             products = itertools.product(final_charset, repeat=length)
             for item in products:
+                if pbar:
+                    pbar.update(1)
                 yield "".join(item)
+
+        if pbar:
+            pbar.close()

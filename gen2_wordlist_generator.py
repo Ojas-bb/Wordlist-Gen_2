@@ -4,23 +4,27 @@ import argparse
 import sys
 import os
 import importlib
-from plugins.base import BasePlugin
+from gen2_plugins.base import BasePlugin
 
 def load_plugins():
     """
-    Dynamically loads all plugin classes from the 'plugins' directory.
+    Dynamically loads all plugin classes from the 'gen2_plugins' directory.
     """
     plugin_classes = []
-    plugin_dir = os.path.join(os.path.dirname(__file__), "plugins")
+    # Correctly locate the plugins directory relative to this script's location
+    script_dir = os.path.dirname(__file__)
+    plugin_dir = os.path.join(script_dir, "gen2_plugins")
 
-    # Ensure the plugin directory exists
     if not os.path.isdir(plugin_dir):
         print(f"Warning: Plugin directory '{plugin_dir}' not found.", file=sys.stderr)
         return []
 
+    # Add plugin directory to path to allow imports
+    sys.path.insert(0, script_dir)
+
     for filename in os.listdir(plugin_dir):
         if filename.endswith(".py") and not filename.startswith("__"):
-            module_name = f"plugins.{filename[:-3]}"
+            module_name = f"gen2_plugins.{filename[:-3]}"
             try:
                 module = importlib.import_module(module_name)
                 for item_name in dir(module):
@@ -34,36 +38,36 @@ def load_plugins():
 
 def main():
     parser = argparse.ArgumentParser(
-        description="A modular, plugin-based wordlist generator.",
+        description="A modular, plugin-based wordlist generator (gen2).",
         formatter_class=argparse.RawTextHelpFormatter
     )
 
-    # --- Load Plugins and Build Parser ---
     plugin_classes = load_plugins()
 
-    # Add general output options that the core engine will handle
     output_group = parser.add_argument_group('General Output Options')
     output_group.add_argument("-o", "--output", type=str, help="Output file path. Defaults to stdout.")
     output_group.add_argument("--prefix", type=str, default="", help="A string to prepend to each word.")
     output_group.add_argument("--suffix", type=str, default="", help="A string to append to each word.")
     output_group.add_argument("--progress", action="store_true", help="Show progress bars for long operations.")
 
-    # Let each plugin add its own arguments to the parser
     for plugin_class in plugin_classes:
         plugin_class.add_arguments(parser)
 
     args = parser.parse_args()
 
-    # --- Instantiate and Run Plugins ---
+    # --- Argument Validation for conflicting generator modes ---
+    is_charset_mode = any([args.min_length is not None, args.max_length is not None, args.charset, args.numeric, args.alpha_lower, args.alpha_upper, args.special])
+    is_pattern_mode = args.pattern is not None
 
-    # Instantiate plugins that should be run
+    if is_charset_mode and is_pattern_mode:
+        parser.error("Argument Error: Charset mode arguments (e.g., --min-length) cannot be used with pattern mode (--pattern).")
+
     active_plugins = []
     for plugin_class in plugin_classes:
         plugin_instance = plugin_class(args)
         if plugin_instance.should_run():
             active_plugins.append(plugin_instance)
 
-    # Sort plugins by their priority attribute
     active_plugins.sort(key=lambda p: p.priority)
 
     if not active_plugins:
@@ -74,12 +78,9 @@ def main():
     output_stream = open(args.output, 'w') if args.output else sys.stdout
 
     try:
-        # Keep track of unique words to avoid duplicates from different plugins
         all_words = set()
-
         for plugin in active_plugins:
             try:
-                # The run method should be a generator yielding words
                 for word in plugin.run():
                     if word not in all_words:
                         output_stream.write(f"{args.prefix}{word}{args.suffix}\n")

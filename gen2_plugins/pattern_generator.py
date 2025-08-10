@@ -1,6 +1,6 @@
 import string
 import itertools
-from plugins.base import BasePlugin
+from gen2_plugins.base import BasePlugin
 
 class PatternGeneratorPlugin(BasePlugin):
     name = "pattern_generator"
@@ -17,6 +17,8 @@ class PatternGeneratorPlugin(BasePlugin):
 
     def run(self):
         """Generates words from a mask pattern and yields them."""
+        import sys
+
         pattern = self.args.pattern
         charset_map = {
             'l': string.ascii_lowercase,
@@ -40,6 +42,23 @@ class PatternGeneratorPlugin(BasePlugin):
                 char_groups.append(pattern[i])
                 i += 1
 
+        pbar = None
+        if self.args.progress:
+            try:
+                from tqdm import tqdm
+            except ImportError:
+                raise ImportError("Progress bar requires 'tqdm'. Please run: pip install tqdm")
+
+            total_words = 1
+            for group in char_groups:
+                total_words *= len(group)
+            pbar = tqdm(total=total_words, desc="Generating from Pattern", unit="word", file=sys.stderr)
+
         products = itertools.product(*char_groups)
         for item in products:
+            if pbar:
+                pbar.update(1)
             yield "".join(item)
+
+        if pbar:
+            pbar.close()

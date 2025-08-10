@@ -1,0 +1,6 @@
+# Ignore the experimental plugin-based version directory
+gen__2/
+
+# Ignore Python cache files
+__pycache__/
+*.pyc
