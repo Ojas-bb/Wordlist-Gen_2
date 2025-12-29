@@ -11,7 +11,7 @@ To get started, you need to have Python 3 and `git` installed on your system.
 Open your terminal and run the following command to clone the repository into a directory named `wordlist-gen2`.
 
 ```bash
-git clone https://github.com/Ojas-bb/Gen_2.git wordlist-gen2
+git clone https://github.com/Ojas-bb/Wordlist-Gen_2.git
 ```
 
 After the command finishes, navigate into the new directory:
